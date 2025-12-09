@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almacén de Canasta Familiar</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+            <!-- ...existing code... -->
+            <section class="section" id="historialSection" style="margin-bottom:0;">
+                <h2><i class="fa-solid fa-clock"></i> Historial de ingreso de usuarios</h2>
+                <div id="historialUsuarios" class="historial-usuarios"></div>
+            </section>
+        <!-- Modal de información de usuario -->
+        <div id="userModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span id="closeModal" class="close">&times;</span>
+                <h3 id="modalTitle"></h3>
+                <p id="modalMsg"></p>
+            </div>
+        </div>
+    <div class="container">
+        <section class="section">
+            <h2><i class="fa-solid fa-user"></i> Seleccionar usuario</h2>
+            <form id="userForm" style="display:flex; gap:12px; align-items:center; margin-bottom:18px;">
+                <select id="userSelect" required onchange="showCajaFields()">
+                    <option value="Administrador">Administrador</option>
+                    <option value="Caja 1">Caja 1</option>
+                    <option value="Caja 2">Caja 2</option>
+                    <option value="Caja 3">Caja 3</option>
+                    <option value="Caja 4">Caja 4</option>
+                    <option value="Caja 5">Caja 5</option>
+                    <option value="Bodega">Bodega</option>
+                </select>
+                <input type="text" id="aidCaja" placeholder="AID (4 dígitos)" maxlength="4" pattern="\d{4}" style="display:none;" required>
+                <input type="email" id="emailCaja" placeholder="Correo @gmail.com" style="display:none;" required>
+                <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> Ingresar</button>
+            </form>
+            <div id="currentUser" style="font-size:1.1rem; color:#2980b9; font-weight:600;"></div>
+        </section>
+        <h1><i class="fa-solid fa-store"></i> Almacén de Productos de Canasta Familiar</h1>
+        <section class="section">
+            <h2><i class="fa-solid fa-plus"></i> Registrar producto</h2>
+            <div id="msgAgregar" class="permiso-msg"></div>
+            <form id="productForm">
+                <input type="text" id="name" placeholder="Nombre del producto" required>
+                <select id="category" required>
+                    <option value="">Selecciona categoría</option>
+                    <option value="Alimentos">Alimentos</option>
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Higiene">Higiene</option>
+                    <option value="Limpieza">Limpieza</option>
+                    <option value="Cuidado Personal">Cuidado Personal</option>
+                    <option value="Otros">Otros</option>
+                </select>
+                <input type="number" id="price" placeholder="Precio" required>
+                <input type="number" id="quantity" placeholder="Cantidad" required>
+                <select id="unit" required>
+                    <option value="">Unidad</option>
+                    <option value="g">Gramos (g)</option>
+                    <option value="mg">Miligramos (mg)</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="l">Litros (l)</option>
+                    <option value="mm">Milímetros (mm)</option>
+                    <option value="cm">Centímetros (cm)</option>
+                    <option value="m">Metros (m)</option>
+                    <option value="unidad">Unidad</option>
+                    <option value="otros">Otros</option>
+                </select>
+                <button type="submit"><i class="fa-solid fa-plus"></i> Agregar Producto</button>
+            </form>
+        </section>
+        <section class="section">
+            <h2><i class="fa-solid fa-bolt"></i> Acciones rápidas</h2>
+            <div id="msgAcciones" class="permiso-msg"></div>
+            <div class="actions">
+                <input type="text" id="searchId" placeholder="Buscar por ID">
+                <button onclick="searchProductById()"><i class="fa-solid fa-magnifying-glass"></i> Buscar por ID</button>
+                <input type="text" id="searchName" placeholder="Buscar por nombre">
+                <button onclick="searchProductByName()"><i class="fa-solid fa-magnifying-glass"></i> Buscar por nombre</button>
+                <input type="text" id="deleteId" placeholder="Eliminar por ID">
+                <button onclick="deleteProductById()"><i class="fa-solid fa-trash"></i> Eliminar por ID</button>
+                <button onclick="removeDuplicates()" style="background:#e74c3c;"><i class="fa-solid fa-clone"></i> Eliminar duplicados</button>
+            </div>
+        </section>
+        <section class="section">
+            <h2><i class="fa-solid fa-boxes-stacked"></i> Inventario</h2>
+            <div id="msgInventario" class="permiso-msg"></div>
+            <div id="categorySummary" class="category-summary"></div>
+            <div class="inventory-table-wrapper">
+                <table id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Unidad</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+        <section class="section">
+            <h2><i class="fa-solid fa-pen-to-square"></i> Editar producto</h2>
+            <div id="msgEditar" class="permiso-msg"></div>
+            <form id="editForm" style="display:none; gap:10px; flex-wrap:wrap;">
+                <input type="text" id="editId" placeholder="ID" readonly>
+                <input type="text" id="editName" placeholder="Nombre" required>
+                <select id="editCategory" required>
+                    <option value="">Selecciona categoría</option>
+                    <option value="Alimentos">Alimentos</option>
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Higiene">Higiene</option>
+                    <option value="Limpieza">Limpieza</option>
+                    <option value="Cuidado Personal">Cuidado Personal</option>
+                    <option value="Otros">Otros</option>
+                </select>
+                <input type="number" id="editPrice" placeholder="Precio" required>
+                <input type="number" id="editQuantity" placeholder="Cantidad" required>
+                <select id="editUnit" required>
+                    <option value="">Unidad</option>
+                    <option value="g">Gramos (g)</option>
+                    <option value="mg">Miligramos (mg)</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="l">Litros (l)</option>
+                    <option value="mm">Milímetros (mm)</option>
+                    <option value="cm">Centímetros (cm)</option>
+                    <option value="m">Metros (m)</option>
+                    <option value="unidad">Unidad</option>
+                    <option value="otros">Otros</option>
+                </select>
+                <button type="submit"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios</button>
+            </form>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <input type="text" id="editSearchId" placeholder="Buscar producto por ID">
+                <button onclick="showEditForm()"><i class="fa-solid fa-magnifying-glass"></i> Buscar y editar</button>
+            </div>
+        </section>
+        <!-- Historial de ingreso de usuarios (solo tabla, sin título destacado) -->
+        <div id="historialUsuarios" class="historial-usuarios"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
